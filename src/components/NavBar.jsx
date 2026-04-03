@@ -8,7 +8,7 @@ export default function NavBar() {
     { path: '/factures', label: 'Factures', icon: '🧾' },
     { path: '/nouveau', label: 'Nouveau', icon: '➕' },
     { path: '/clients', label: 'Clients', icon: '👥' },
-    { path: '/catalogue', label: 'Catalogue', icon: '📦' },
+    { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
   ]
 
   return (

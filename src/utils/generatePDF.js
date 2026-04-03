@@ -7,47 +7,50 @@ function formatMontant(n) {
 
 export function generatePDF(facture) {
   const doc = new jsPDF()
+  const entreprise = JSON.parse(localStorage.getItem('entreprise') || '{}')
 
   doc.setFillColor(26, 60, 94)
-  doc.rect(0, 0, 210, 40, 'F')
+  doc.rect(0, 0, 210, 45, 'F')
 
   doc.setTextColor(255, 255, 255)
-  doc.setFontSize(20)
+  doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.text('ProAppli Facture', 14, 20)
+  doc.text(entreprise.nom || 'ProAppli Facture', 14, 18)
 
-  doc.setFontSize(10)
+  doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('www.proappli.com', 14, 30)
+  doc.setTextColor(160, 188, 216)
+  if (entreprise.adresse) doc.text(entreprise.adresse, 14, 26)
+  if (entreprise.telephone) doc.text(`Tél : ${entreprise.telephone}`, 14, 32)
+  if (entreprise.email) doc.text(entreprise.email, 14, 38)
+  if (entreprise.ifu) doc.text(`IFU : ${entreprise.ifu}`, 120, 26)
 
   doc.setTextColor(26, 60, 94)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text('FACTURE', 14, 55)
+  doc.text('FACTURE', 14, 58)
 
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(100, 100, 100)
-  doc.text(`Date : ${facture.date}`, 14, 65)
-  doc.text(`N° : FAC-${facture.id?.toString().slice(-6).toUpperCase()}`, 14, 72)
+  doc.text(`Date : ${facture.date}`, 14, 68)
+  doc.text(`N° : FAC-${facture.id?.toString().slice(-6).toUpperCase()}`, 14, 75)
 
   doc.setTextColor(26, 60, 94)
-  doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Client :', 14, 85)
-  doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
-  doc.text(facture.client, 14, 93)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Client :', 14, 88)
+  doc.setFont('helvetica', 'normal')
+  doc.text(facture.client, 14, 96)
 
   if (facture.objet) {
     doc.setFont('helvetica', 'bold')
-    doc.text('Objet :', 14, 103)
+    doc.text('Objet :', 14, 106)
     doc.setFont('helvetica', 'normal')
-    doc.text(facture.objet, 14, 111)
+    doc.text(facture.objet, 14, 114)
   }
 
   const lignes = (facture.lignes || []).filter(l => l.description && l.description.trim() !== '')
-
   const rows = lignes.map(l => [
     l.description,
     l.quantite,
@@ -56,7 +59,7 @@ export function generatePDF(facture) {
   ])
 
   autoTable(doc, {
-    startY: 120,
+    startY: 122,
     head: [['Description', 'Qté', 'Prix unitaire', 'Total']],
     body: rows,
     headStyles: { fillColor: [26, 60, 94], textColor: 255 },
