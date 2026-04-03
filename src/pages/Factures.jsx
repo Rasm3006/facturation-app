@@ -4,29 +4,33 @@ export default function Factures() {
   const { factures } = useApp()
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Mes Factures</h1>
+    <div style={{ background: '#F0F7FF', minHeight: '100vh' }}>
+      <div style={{ background: '#1A3C5E', padding: '2rem 1.5rem 1.5rem' }}>
+        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Mes Factures</h1>
+        <p style={{ color: '#a0bcd8', fontSize: 13, margin: '4px 0 0' }}>{factures.length} facture(s)</p>
+      </div>
 
-      {factures.length === 0 && (
-        <p className="text-gray-400 text-center">Aucune facture enregistrée</p>
-      )}
-
-      <div className="space-y-3">
-        {factures.map(f => (
-          <div key={f.id} className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-bold">{f.client}</p>
-                <p className="text-sm text-gray-500">{f.objet}</p>
-                <p className="text-xs text-gray-400 mt-1">{f.date}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-blue-600">{f.total.toLocaleString()} FCFA</p>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Payée</span>
+      <div style={{ padding: '1.5rem' }}>
+        {factures.length === 0 && (
+          <p style={{ color: '#a0bcd8', textAlign: 'center', marginTop: 32 }}>Aucune facture enregistrée</p>
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {factures.map(f => (
+            <div key={f.id} style={{ background: '#fff', borderRadius: 12, padding: '1rem', border: '0.5px solid #dce8f5' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <p style={{ fontWeight: 700, color: '#1A3C5E', margin: '0 0 4px', fontSize: 15 }}>{f.client}</p>
+                  <p style={{ fontSize: 13, color: '#4A90D9', margin: '0 0 4px' }}>{f.objet}</p>
+                  <p style={{ fontSize: 12, color: '#a0bcd8', margin: 0 }}>{f.date}</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontWeight: 700, color: '#2E6DA4', margin: '0 0 6px', fontSize: 15 }}>{f.total?.toLocaleString()} FCFA</p>
+                  <span style={{ background: '#E1F5EE', color: '#0F6E56', fontSize: 11, padding: '3px 10px', borderRadius: 20, fontWeight: 600 }}>Payée</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )

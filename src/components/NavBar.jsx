@@ -12,18 +12,19 @@ export default function NavBar() {
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50">
+    <div className="fixed bottom-0 left-0 right-0 flex justify-around items-center h-16 z-50"
+      style={{ background: '#1A3C5E', borderTop: '1px solid #2E6DA4' }}>
       {liens.map((lien) => (
         <Link
           key={lien.path}
           to={lien.path}
-          className={`flex flex-col items-center text-xs gap-1 px-2 py-2 rounded-lg ${
-            location.pathname === lien.path
-              ? 'text-blue-600 font-bold'
-              : 'text-gray-500'
-          }`}
+          className="flex flex-col items-center text-xs gap-1 px-2 py-2 rounded-lg"
+          style={{
+            color: location.pathname === lien.path ? '#4A90D9' : '#a0bcd8',
+            fontWeight: location.pathname === lien.path ? '700' : '400'
+          }}
         >
-          <span className="text-lg">{lien.icon}</span>
+          <span style={{ fontSize: 18 }}>{lien.icon}</span>
           <span>{lien.label}</span>
         </Link>
       ))}

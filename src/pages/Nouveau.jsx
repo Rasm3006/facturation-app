@@ -38,91 +38,103 @@ export default function Nouveau() {
     navigate('/factures')
   }
 
+  const inputStyle = { width: '100%', border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, boxSizing: 'border-box', marginBottom: 8 }
+
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Nouvelle Facture</h1>
-
-      <div className="space-y-3 mb-4">
-        <select
-          className="w-full border border-gray-300 rounded-lg p-2"
-          value={client}
-          onChange={e => setClient(e.target.value)}
-        >
-          <option value="">Sélectionner un client</option>
-          {clients.map(c => (
-            <option key={c.id} value={c.nom}>{c.nom}</option>
-          ))}
-        </select>
-        <input
-          className="w-full border border-gray-300 rounded-lg p-2"
-          placeholder="Objet de la facture"
-          value={objet}
-          onChange={e => setObjet(e.target.value)}
-        />
+    <div style={{ background: '#F0F7FF', minHeight: '100vh' }}>
+      <div style={{ background: '#1A3C5E', padding: '2rem 1.5rem 1.5rem' }}>
+        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Nouvelle Facture</h1>
       </div>
 
-      <h2 className="font-bold mb-2">Lignes de la facture</h2>
-      <div className="space-y-2 mb-3">
-        {lignes.map(l => (
-          <div key={l.id} className="bg-gray-50 p-3 rounded-xl space-y-2">
-            <select
-              className="w-full border border-gray-300 rounded-lg p-2"
-              onChange={e => choisirProduit(l.id, e.target.value)}
-            >
-              <option value="">Choisir du catalogue</option>
-              {produits.map(p => (
-                <option key={p.id} value={p.id}>{p.nom} — {p.prix.toLocaleString()} FCFA</option>
-              ))}
-            </select>
-            <input
-              className="w-full border border-gray-300 rounded-lg p-2"
-              placeholder="Description"
-              value={l.description}
-              onChange={e => modifierLigne(l.id, 'description', e.target.value)}
-            />
-            <div className="flex gap-2">
+      <div style={{ padding: '1.5rem' }}>
+        <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Informations</p>
+          <select
+            style={{ ...inputStyle, color: client ? '#1A3C5E' : '#a0bcd8' }}
+            value={client}
+            onChange={e => setClient(e.target.value)}
+          >
+            <option value="">Sélectionner un client</option>
+            {clients.map(c => (
+              <option key={c.id} value={c.nom}>{c.nom}</option>
+            ))}
+          </select>
+          <input
+            style={inputStyle}
+            placeholder="Objet de la facture"
+            value={objet}
+            onChange={e => setObjet(e.target.value)}
+          />
+        </div>
+
+        <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Lignes de facture</p>
+          {lignes.map((l, i) => (
+            <div key={l.id} style={{ background: '#F0F7FF', borderRadius: 10, padding: '0.75rem', marginBottom: 8 }}>
+              <p style={{ color: '#2E6DA4', fontSize: 12, fontWeight: 600, margin: '0 0 8px' }}>Ligne {i + 1}</p>
+              <select
+                style={{ ...inputStyle, background: '#fff' }}
+                onChange={e => choisirProduit(l.id, e.target.value)}
+              >
+                <option value="">Choisir du catalogue</option>
+                {produits.map(p => (
+                  <option key={p.id} value={p.id}>{p.nom} — {p.prix?.toLocaleString()} FCFA</option>
+                ))}
+              </select>
               <input
-                className="w-1/2 border border-gray-300 rounded-lg p-2"
-                placeholder="Quantité"
-                type="number"
-                value={l.quantite}
-                onChange={e => modifierLigne(l.id, 'quantite', Number(e.target.value))}
+                style={{ ...inputStyle, background: '#fff' }}
+                placeholder="Description"
+                value={l.description}
+                onChange={e => modifierLigne(l.id, 'description', e.target.value)}
               />
-              <input
-                className="w-1/2 border border-gray-300 rounded-lg p-2"
-                placeholder="Prix unitaire"
-                type="number"
-                value={l.prix}
-                onChange={e => modifierLigne(l.id, 'prix', Number(e.target.value))}
-              />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, background: '#fff' }}
+                  placeholder="Qté"
+                  type="number"
+                  value={l.quantite}
+                  onChange={e => modifierLigne(l.id, 'quantite', Number(e.target.value))}
+                />
+                <input
+                  style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, background: '#fff' }}
+                  placeholder="Prix unitaire"
+                  type="number"
+                  value={l.prix}
+                  onChange={e => modifierLigne(l.id, 'prix', Number(e.target.value))}
+                />
+              </div>
+              <p style={{ color: '#2E6DA4', fontSize: 13, fontWeight: 600, margin: '8px 0 4px', textAlign: 'right' }}>
+                Sous-total : {(l.quantite * l.prix).toLocaleString()} FCFA
+              </p>
+              {lignes.length > 1 && (
+                <button onClick={() => supprimerLigne(l.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', fontSize: 13, cursor: 'pointer', padding: 0 }}>
+                  Supprimer cette ligne
+                </button>
+              )}
             </div>
-            <button
-              onClick={() => supprimerLigne(l.id)}
-              className="text-red-500 text-sm"
-            >
-              Supprimer cette ligne
-            </button>
+          ))}
+          <button
+            onClick={ajouterLigne}
+            style={{ width: '100%', background: 'none', border: '2px dashed #4A90D9', color: '#2E6DA4', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+          >
+            + Ajouter une ligne
+          </button>
+        </div>
+
+        <div style={{ background: '#1A3C5E', borderRadius: 12, padding: '1rem', marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ color: '#a0bcd8', margin: 0, fontSize: 14 }}>Total</p>
+            <p style={{ color: '#fff', fontWeight: 700, fontSize: 22, margin: 0 }}>{total.toLocaleString()} FCFA</p>
           </div>
-        ))}
+        </div>
+
+        <button
+          onClick={enregistrer}
+          style={{ width: '100%', background: '#2E6DA4', color: '#fff', border: 'none', borderRadius: 12, padding: '1rem', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}
+        >
+          Enregistrer la facture
+        </button>
       </div>
-
-      <button
-        onClick={ajouterLigne}
-        className="w-full border-2 border-dashed border-blue-400 text-blue-600 rounded-xl p-2 mb-4"
-      >
-        + Ajouter une ligne
-      </button>
-
-      <div className="bg-blue-50 rounded-xl p-4 mb-4">
-        <p className="text-right font-bold text-xl">Total : {total.toLocaleString()} FCFA</p>
-      </div>
-
-      <button
-        onClick={enregistrer}
-        className="w-full bg-blue-600 text-white rounded-xl p-3 font-bold text-lg"
-      >
-        Enregistrer la facture
-      </button>
     </div>
   )
 }
