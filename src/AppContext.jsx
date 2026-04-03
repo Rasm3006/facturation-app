@@ -35,6 +35,12 @@ export function AppProvider({ children }) {
       objet: facture.objet,
       total: facture.total,
       lignes: facture.lignes,
+      tva: facture.tva,
+      soustotal: facture.sousTotal,
+      montanttva: facture.montantTVA,
+      conditions: facture.conditions,
+      typeDoc: facture.typeDoc,
+      statut: 'En attente',
       date: new Date().toLocaleDateString()
     }]).select()
     if (error) console.error('Erreur:', error)
@@ -71,8 +77,8 @@ export function AppProvider({ children }) {
   }
 
   return (
-    <AppContext.Provider value={{ 
-      factures, clients, produits,
+    <AppContext.Provider value={{
+      factures, setFactures, clients, produits,
       ajouterFacture, ajouterClient, supprimerClient,
       ajouterProduit, supprimerProduit
     }}>
