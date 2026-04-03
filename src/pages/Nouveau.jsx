@@ -25,7 +25,7 @@ export default function Nouveau() {
   function choisirProduit(id, produitId) {
     const produit = produits.find(p => p.id === produitId)
     if (produit) {
-      setLignes(lignes.map(l => l.id === id ? { ...l, description: produit.nom, prix: produit.prix } : l))
+      setLignes(lignes.map(l => l.id === id ? { ...l, description: produit.nom, prix: Number(produit.prix) } : l))
     }
   }
 
@@ -33,7 +33,7 @@ export default function Nouveau() {
     setLignes(lignes.filter(l => l.id !== id))
   }
 
-  const sousTotal = lignes.reduce((sum, l) => sum + (l.quantite * l.prix), 0)
+  const sousTotal = lignes.reduce((sum, l) => sum + (Number(l.quantite) * Number(l.prix)), 0)
   const montantTVA = tva ? sousTotal * 0.18 : 0
   const total = sousTotal + montantTVA
 
@@ -57,7 +57,7 @@ export default function Nouveau() {
       <div style={{ padding: '1.5rem' }}>
         <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
           <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Type de document</p>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             {['Facture', 'Devis', 'Proforma'].map(t => (
               <button
                 key={t}
@@ -112,7 +112,7 @@ export default function Nouveau() {
               >
                 <option value="">Choisir du catalogue</option>
                 {produits.map(p => (
-                  <option key={p.id} value={p.id}>{p.nom} — {p.prix?.toLocaleString()} FCFA</option>
+                  <option key={p.id} value={p.id}>{p.nom} — {Number(p.prix).toLocaleString()} FCFA</option>
                 ))}
               </select>
               <input
@@ -126,19 +126,21 @@ export default function Nouveau() {
                   style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, background: '#fff' }}
                   placeholder="Qté"
                   type="number"
+                  inputMode="numeric"
                   value={l.quantite}
-                  onChange={e => modifierLigne(l.id, 'quantite', Number(e.target.value))}
+                  onChange={e => modifierLigne(l.id, 'quantite', Number(e.target.value) || 0)}
                 />
                 <input
                   style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, background: '#fff' }}
                   placeholder="Prix unitaire"
                   type="number"
+                  inputMode="numeric"
                   value={l.prix}
-                  onChange={e => modifierLigne(l.id, 'prix', Number(e.target.value))}
+                  onChange={e => modifierLigne(l.id, 'prix', Number(e.target.value) || 0)}
                 />
               </div>
               <p style={{ color: '#2E6DA4', fontSize: 13, fontWeight: 600, margin: '8px 0 4px', textAlign: 'right' }}>
-                Sous-total : {(l.quantite * l.prix).toLocaleString()} FCFA
+                Sous-total : {(Number(l.quantite) * Number(l.prix)).toLocaleString()} FCFA
               </p>
               {lignes.length > 1 && (
                 <button onClick={() => supprimerLigne(l.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', fontSize: 13, cursor: 'pointer', padding: 0 }}>
@@ -162,7 +164,7 @@ export default function Nouveau() {
               onClick={() => setTva(!tva)}
               style={{
                 width: 48, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer',
-                background: tva ? '#2E6DA4' : '#dce8f5', position: 'relative', transition: '0.2s'
+                background: tva ? '#2E6DA4' : '#dce8f5', position: 'relative'
               }}
             >
               <div style={{
@@ -184,12 +186,12 @@ export default function Nouveau() {
           {tva && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <p style={{ color: '#a0bcd8', margin: 0, fontSize: 13 }}>TVA (18%)</p>
-              <p style={{ color: '#fff', margin: 0, fontSize: 13 }}>{montantTVA.toLocaleString()} FCFA</p>
+              <p style={{ color: '#fff', margin: 0, fontSize: 13 }}>{Math.round(montantTVA).toLocaleString()} FCFA</p>
             </div>
           )}
           <div style={{ borderTop: '1px solid #2E6DA4', paddingTop: 8, display: 'flex', justifyContent: 'space-between' }}>
             <p style={{ color: '#a0bcd8', margin: 0, fontSize: 14 }}>Total TTC</p>
-            <p style={{ color: '#fff', fontWeight: 700, fontSize: 22, margin: 0 }}>{total.toLocaleString()} FCFA</p>
+            <p style={{ color: '#fff', fontWeight: 700, fontSize: 22, margin: 0 }}>{Math.round(total).toLocaleString()} FCFA</p>
           </div>
         </div>
 
