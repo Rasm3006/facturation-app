@@ -7,6 +7,9 @@ export default function Nouveau() {
   const navigate = useNavigate()
   const [client, setClient] = useState('')
   const [objet, setObjet] = useState('')
+  const [typeDoc, setTypeDoc] = useState('Facture')
+  const [tva, setTva] = useState(false)
+  const [conditions, setConditions] = useState('')
   const [lignes, setLignes] = useState([
     { id: Date.now(), description: '', quantite: 1, prix: 0 }
   ])
@@ -30,23 +33,48 @@ export default function Nouveau() {
     setLignes(lignes.filter(l => l.id !== id))
   }
 
-  const total = lignes.reduce((sum, l) => sum + (l.quantite * l.prix), 0)
+  const sousTotal = lignes.reduce((sum, l) => sum + (l.quantite * l.prix), 0)
+  const montantTVA = tva ? sousTotal * 0.18 : 0
+  const total = sousTotal + montantTVA
 
   function enregistrer() {
     if (!client) return
-    ajouterFacture({ client, objet, lignes, total })
+    ajouterFacture({ client, objet, typeDoc, tva, conditions, lignes, sousTotal, montantTVA, total })
     navigate('/factures')
   }
 
-  const inputStyle = { width: '100%', border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14, boxSizing: 'border-box', marginBottom: 8 }
+  const inputStyle = {
+    width: '100%', border: '1px solid #dce8f5', borderRadius: 8,
+    padding: '10px 12px', fontSize: 14, boxSizing: 'border-box', marginBottom: 8
+  }
 
   return (
     <div style={{ background: '#F0F7FF', minHeight: '100vh' }}>
       <div style={{ background: '#1A3C5E', padding: '2rem 1.5rem 1.5rem' }}>
-        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Nouvelle Facture</h1>
+        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Nouveau Document</h1>
       </div>
 
       <div style={{ padding: '1.5rem' }}>
+        <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Type de document</p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+            {['Facture', 'Devis', 'Proforma'].map(t => (
+              <button
+                key={t}
+                onClick={() => setTypeDoc(t)}
+                style={{
+                  flex: 1, padding: '8px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                  background: typeDoc === t ? '#1A3C5E' : '#F0F7FF',
+                  color: typeDoc === t ? '#fff' : '#2E6DA4',
+                  border: typeDoc === t ? 'none' : '1px solid #dce8f5'
+                }}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
           <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Informations</p>
           <select
@@ -61,14 +89,20 @@ export default function Nouveau() {
           </select>
           <input
             style={inputStyle}
-            placeholder="Objet de la facture"
+            placeholder="Objet du document"
             value={objet}
             onChange={e => setObjet(e.target.value)}
+          />
+          <input
+            style={inputStyle}
+            placeholder="Conditions de paiement (ex: 30 jours)"
+            value={conditions}
+            onChange={e => setConditions(e.target.value)}
           />
         </div>
 
         <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
-          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Lignes de facture</p>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Lignes</p>
           {lignes.map((l, i) => (
             <div key={l.id} style={{ background: '#F0F7FF', borderRadius: 10, padding: '0.75rem', marginBottom: 8 }}>
               <p style={{ color: '#2E6DA4', fontSize: 12, fontWeight: 600, margin: '0 0 8px' }}>Ligne {i + 1}</p>
@@ -121,9 +155,40 @@ export default function Nouveau() {
           </button>
         </div>
 
+        <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>TVA</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              onClick={() => setTva(!tva)}
+              style={{
+                width: 48, height: 26, borderRadius: 13, border: 'none', cursor: 'pointer',
+                background: tva ? '#2E6DA4' : '#dce8f5', position: 'relative', transition: '0.2s'
+              }}
+            >
+              <div style={{
+                width: 20, height: 20, borderRadius: '50%', background: '#fff',
+                position: 'absolute', top: 3, left: tva ? 25 : 3, transition: '0.2s'
+              }} />
+            </button>
+            <span style={{ color: '#1A3C5E', fontSize: 14 }}>
+              {tva ? 'TVA 18% activée' : 'Sans TVA'}
+            </span>
+          </div>
+        </div>
+
         <div style={{ background: '#1A3C5E', borderRadius: 12, padding: '1rem', marginBottom: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ color: '#a0bcd8', margin: 0, fontSize: 14 }}>Total</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <p style={{ color: '#a0bcd8', margin: 0, fontSize: 13 }}>Sous-total HT</p>
+            <p style={{ color: '#fff', margin: 0, fontSize: 13 }}>{sousTotal.toLocaleString()} FCFA</p>
+          </div>
+          {tva && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <p style={{ color: '#a0bcd8', margin: 0, fontSize: 13 }}>TVA (18%)</p>
+              <p style={{ color: '#fff', margin: 0, fontSize: 13 }}>{montantTVA.toLocaleString()} FCFA</p>
+            </div>
+          )}
+          <div style={{ borderTop: '1px solid #2E6DA4', paddingTop: 8, display: 'flex', justifyContent: 'space-between' }}>
+            <p style={{ color: '#a0bcd8', margin: 0, fontSize: 14 }}>Total TTC</p>
             <p style={{ color: '#fff', fontWeight: 700, fontSize: 22, margin: 0 }}>{total.toLocaleString()} FCFA</p>
           </div>
         </div>
@@ -132,7 +197,7 @@ export default function Nouveau() {
           onClick={enregistrer}
           style={{ width: '100%', background: '#2E6DA4', color: '#fff', border: 'none', borderRadius: 12, padding: '1rem', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}
         >
-          Enregistrer la facture
+          Enregistrer
         </button>
       </div>
     </div>
