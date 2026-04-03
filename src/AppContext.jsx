@@ -30,22 +30,23 @@ export function AppProvider({ children }) {
   }
 
   async function ajouterFacture(facture) {
-    const { data, error } = await supabase.from('factures').insert([{
-      client: facture.client,
-      objet: facture.objet,
-      total: facture.total,
-      lignes: facture.lignes,
-      tva: facture.tva,
-      soustotal: facture.sousTotal,
-      montanttva: facture.montantTVA,
-      conditions: facture.conditions,
-      typeDoc: facture.typeDoc,
-      statut: 'En attente',
-      date: new Date().toLocaleDateString()
-    }]).select()
-    if (error) console.error('Erreur:', error)
-    if (data) setFactures([data[0], ...factures])
-  }
+  const { data, error } = await supabase.from('factures').insert([{
+    client: facture.client,
+    objet: facture.objet,
+    total: facture.total,
+    lignes: facture.lignes,
+    tva: facture.tva,
+    soustotal: facture.sousTotal,
+    montanttva: facture.montantTVA,
+    conditions: facture.conditions,
+    typedoc: facture.typeDoc,
+    signature: facture.signature,
+    statut: 'En attente',
+    date: new Date().toLocaleDateString()
+  }]).select()
+  if (error) console.error('Erreur:', error)
+  if (data) setFactures([data[0], ...factures])
+}
 
   async function ajouterClient(client) {
     const { data, error } = await supabase.from('clients').insert([{

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../AppContext'
 import { useNavigate } from 'react-router-dom'
+import SignaturePad from '../components/SignaturePad'
 
 export default function Nouveau() {
   const { ajouterFacture, clients, produits } = useApp()
@@ -10,6 +11,8 @@ export default function Nouveau() {
   const [typeDoc, setTypeDoc] = useState('Facture')
   const [tva, setTva] = useState(false)
   const [conditions, setConditions] = useState('')
+  const [signature, setSignature] = useState(null)
+  const [showSignature, setShowSignature] = useState(false)
   const [lignes, setLignes] = useState([
     { id: Date.now(), description: '', quantite: 1, prix: 0 }
   ])
@@ -39,7 +42,7 @@ export default function Nouveau() {
 
   function enregistrer() {
     if (!client) return
-    ajouterFacture({ client, objet, typeDoc, tva, conditions, lignes, sousTotal, montantTVA, total })
+    ajouterFacture({ client, objet, typeDoc, tva, conditions, lignes, sousTotal, montantTVA, total, signature })
     navigate('/factures')
   }
 
@@ -177,6 +180,35 @@ export default function Nouveau() {
             </span>
           </div>
         </div>
+
+        <div style={{ background: '#fff', borderRadius: 12, padding: '1rem', marginBottom: 12, border: '0.5px solid #dce8f5' }}>
+          <p style={{ color: '#1A3C5E', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>Signature</p>
+          {signature ? (
+            <div>
+              <img src={signature} alt="Signature" style={{ width: '100%', maxHeight: 80, objectFit: 'contain', border: '1px solid #dce8f5', borderRadius: 8 }} />
+              <button
+                onClick={() => setSignature(null)}
+                style={{ marginTop: 8, background: 'none', border: 'none', color: '#e53e3e', fontSize: 13, cursor: 'pointer' }}
+              >
+                Supprimer la signature
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowSignature(true)}
+              style={{ width: '100%', background: '#F0F7FF', border: '2px dashed #4A90D9', color: '#2E6DA4', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+            >
+              ✍️ Ajouter une signature
+            </button>
+          )}
+        </div>
+
+        {showSignature && (
+          <SignaturePad
+            onSave={(data) => { setSignature(data); setShowSignature(false) }}
+            onClose={() => setShowSignature(false)}
+          />
+        )}
 
         <div style={{ background: '#1A3C5E', borderRadius: 12, padding: '1rem', marginBottom: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>

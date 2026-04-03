@@ -122,14 +122,19 @@ export function generatePDF(facture) {
 
   finalY += 24
 
-  doc.setDrawColor(26, 60, 94)
-  doc.setLineWidth(0.3)
-  doc.line(14, finalY, 90, finalY)
-  doc.setTextColor(100, 100, 100)
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text('Signature & Cachet', 14, finalY + 6)
+ doc.setDrawColor(26, 60, 94)
+doc.setLineWidth(0.3)
+doc.line(14, finalY, 90, finalY)
+doc.setTextColor(100, 100, 100)
+doc.setFontSize(9)
+doc.setFont('helvetica', 'normal')
+doc.text('Signature & Cachet', 14, finalY + 6)
 
+if (facture.signature) {
+  try {
+    doc.addImage(facture.signature, 'PNG', 14, finalY - 25, 60, 22)
+  } catch (e) {}
+}
   doc.setTextColor(150, 150, 150)
   doc.setFontSize(8)
   doc.text('Merci pour votre confiance.', 105, 285, { align: 'center' })
