@@ -11,6 +11,7 @@ import Parametres from './pages/Parametres'
 import Depenses from './pages/Depenses'
 import Login from './pages/Login'
 import NavBar from './components/NavBar'
+import Rapport from './pages/Rapport'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -39,15 +40,16 @@ function App() {
       <BrowserRouter>
         <div style={{ paddingBottom: 64 }}>
           <Routes>
-            <Route path="/" element={<Accueil />} />
-            <Route path="/factures" element={<Factures />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/nouveau" element={<Nouveau />} />
-            <Route path="/catalogue" element={<Catalogue />} />
-            <Route path="/depenses" element={<Depenses />} />
-            <Route path="/parametres" element={<Parametres />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+  <Route path="/" element={<Accueil />} />
+  <Route path="/factures" element={<Factures />} />
+  <Route path="/clients" element={<Clients />} />
+  <Route path="/nouveau" element={<Nouveau />} />
+  <Route path="/catalogue" element={<Catalogue />} />
+  <Route path="/depenses" element={<Depenses />} />
+  <Route path="/parametres" element={<Parametres />} />
+  <Route path="/rapport" element={<Rapport />} />
+  <Route path="*" element={<Navigate to="/" />} />
+</Routes>
         </div>
         <NavBar />
       </BrowserRouter>

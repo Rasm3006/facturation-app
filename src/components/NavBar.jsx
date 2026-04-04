@@ -14,6 +14,7 @@ export default function NavBar() {
   ]
 
   const plusLiens = [
+    { path: '/rapport', label: 'Rapport', icon: '📊' },
     { path: '/depenses', label: 'Dépenses', icon: '💸' },
     { path: '/catalogue', label: 'Catalogue', icon: '📦' },
     { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
