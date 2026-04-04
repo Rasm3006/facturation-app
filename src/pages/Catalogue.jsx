@@ -5,13 +5,15 @@ export default function Catalogue() {
   const { produits, ajouterProduit, supprimerProduit } = useApp()
   const [nom, setNom] = useState('')
   const [prix, setPrix] = useState('')
+  const [prixAchat, setPrixAchat] = useState('')
   const [unite, setUnite] = useState('')
 
   function handleAjouter() {
     if (!nom || !prix) return
-    ajouterProduit({ nom, prix: Number(prix), unite })
+    ajouterProduit({ nom, prix: Number(prix), prixAchat: Number(prixAchat) || 0, unite })
     setNom('')
     setPrix('')
+    setPrixAchat('')
     setUnite('')
   }
 
@@ -31,21 +33,30 @@ export default function Catalogue() {
             value={nom}
             onChange={e => setNom(e.target.value)}
           />
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <input
               style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14 }}
-              placeholder="Prix unitaire"
+              placeholder="Prix de vente"
               type="number"
+              inputMode="numeric"
               value={prix}
               onChange={e => setPrix(e.target.value)}
             />
             <input
               style={{ flex: 1, border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', fontSize: 14 }}
-              placeholder="Unité (kg, m, h...)"
-              value={unite}
-              onChange={e => setUnite(e.target.value)}
+              placeholder="Prix d'achat (optionnel)"
+              type="number"
+              inputMode="numeric"
+              value={prixAchat}
+              onChange={e => setPrixAchat(e.target.value)}
             />
           </div>
+          <input
+            style={{ width: '100%', border: '1px solid #dce8f5', borderRadius: 8, padding: '10px 12px', marginBottom: 12, fontSize: 14, boxSizing: 'border-box' }}
+            placeholder="Unité (kg, m, h...) optionnel"
+            value={unite}
+            onChange={e => setUnite(e.target.value)}
+          />
           <button
             onClick={handleAjouter}
             style={{ width: '100%', background: '#2E6DA4', color: '#fff', border: 'none', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
@@ -58,20 +69,41 @@ export default function Catalogue() {
           {produits?.length === 0 && (
             <p style={{ color: '#a0bcd8', textAlign: 'center', marginTop: 32 }}>Aucun produit ajouté</p>
           )}
-          {produits?.map(p => (
-            <div key={p.id} style={{ background: '#fff', borderRadius: 12, padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '0.5px solid #dce8f5' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#E6F1FB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                  📦
-                </div>
-                <div>
-                  <p style={{ fontWeight: 700, color: '#1A3C5E', margin: 0 }}>{p.nom}</p>
-                  <p style={{ fontSize: 13, color: '#2E6DA4', margin: 0 }}>{p.prix?.toLocaleString()} FCFA {p.unite && `/ ${p.unite}`}</p>
+          {produits?.map(p => {
+            const marge = p.prix_achat > 0 ? Number(p.prix) - Number(p.prix_achat) : null
+            const margePercent = marge ? Math.round((marge / Number(p.prix)) * 100) : null
+            return (
+              <div key={p.id} style={{ background: '#fff', borderRadius: 12, padding: '1rem', border: '0.5px solid #dce8f5' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: '#E6F1FB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                      📦
+                    </div>
+                    <div>
+                      <p style={{ fontWeight: 700, color: '#1A3C5E', margin: 0 }}>{p.nom}</p>
+                      <p style={{ fontSize: 13, color: '#2E6DA4', margin: '2px 0 0' }}>
+                        Vente : {Number(p.prix).toLocaleString()} FCFA {p.unite && `/ ${p.unite}`}
+                      </p>
+                      {p.prix_achat > 0 && (
+                        <p style={{ fontSize: 12, color: '#a0bcd8', margin: '2px 0 0' }}>
+                          Achat : {Number(p.prix_achat).toLocaleString()} FCFA
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    {marge !== null && (
+                      <span style={{ background: '#E1F5EE', color: '#0F6E56', fontSize: 11, padding: '3px 8px', borderRadius: 20, fontWeight: 600 }}>
+                        +{marge.toLocaleString()} ({margePercent}%)
+                      </span>
+                    )}
+                    <br />
+                    <button onClick={() => supprimerProduit(p.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', fontSize: 18, cursor: 'pointer', marginTop: 4 }}>✕</button>
+                  </div>
                 </div>
               </div>
-              <button onClick={() => supprimerProduit(p.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', fontSize: 18, cursor: 'pointer' }}>✕</button>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

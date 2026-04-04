@@ -7,11 +7,13 @@ export function AppProvider({ children }) {
   const [factures, setFactures] = useState([])
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
+  const [depenses, setDepenses] = useState([])
 
   useEffect(() => {
     chargerClients()
     chargerFactures()
     chargerProduits()
+    chargerDepenses()
   }, [])
 
   async function chargerClients() {
@@ -29,24 +31,29 @@ export function AppProvider({ children }) {
     if (data) setProduits(data)
   }
 
+  async function chargerDepenses() {
+    const { data } = await supabase.from('depenses').select('*').order('created_at', { ascending: false })
+    if (data) setDepenses(data)
+  }
+
   async function ajouterFacture(facture) {
-  const { data, error } = await supabase.from('factures').insert([{
-    client: facture.client,
-    objet: facture.objet,
-    total: facture.total,
-    lignes: facture.lignes,
-    tva: facture.tva,
-    soustotal: facture.sousTotal,
-    montanttva: facture.montantTVA,
-    conditions: facture.conditions,
-    typedoc: facture.typeDoc,
-    signature: facture.signature,
-    statut: 'En attente',
-    date: new Date().toLocaleDateString()
-  }]).select()
-  if (error) console.error('Erreur:', error)
-  if (data) setFactures([data[0], ...factures])
-}
+    const { data, error } = await supabase.from('factures').insert([{
+      client: facture.client,
+      objet: facture.objet,
+      total: facture.total,
+      lignes: facture.lignes,
+      tva: facture.tva,
+      soustotal: facture.sousTotal,
+      montanttva: facture.montantTVA,
+      conditions: facture.conditions,
+      typedoc: facture.typeDoc,
+      signature: facture.signature,
+      statut: 'En attente',
+      date: new Date().toLocaleDateString()
+    }]).select()
+    if (error) console.error('Erreur:', error)
+    if (data) setFactures([data[0], ...factures])
+  }
 
   async function ajouterClient(client) {
     const { data, error } = await supabase.from('clients').insert([{
@@ -62,26 +69,44 @@ export function AppProvider({ children }) {
     setClients(clients.filter(c => c.id !== id))
   }
 
-  async function ajouterProduit(produit) {
-    const { data, error } = await supabase.from('produits').insert([{
-      nom: produit.nom,
-      prix: produit.prix,
-      unite: produit.unite
-    }]).select()
-    if (error) console.error('Erreur:', error)
-    if (data) setProduits([data[0], ...produits])
-  }
+ async function ajouterProduit(produit) {
+  const { data, error } = await supabase.from('produits').insert([{
+    nom: produit.nom,
+    prix: produit.prix,
+    prix_achat: produit.prixAchat || 0,
+    unite: produit.unite
+  }]).select()
+  if (error) console.error('Erreur:', error)
+  if (data) setProduits([data[0], ...produits])
+}
 
   async function supprimerProduit(id) {
     await supabase.from('produits').delete().eq('id', id)
     setProduits(produits.filter(p => p.id !== id))
   }
 
+  async function ajouterDepense(depense) {
+    const { data, error } = await supabase.from('depenses').insert([{
+      libelle: depense.libelle,
+      montant: depense.montant,
+      categorie: depense.categorie,
+      date: depense.date
+    }]).select()
+    if (error) console.error('Erreur:', error)
+    if (data) setDepenses([data[0], ...depenses])
+  }
+
+  async function supprimerDepense(id) {
+    await supabase.from('depenses').delete().eq('id', id)
+    setDepenses(depenses.filter(d => d.id !== id))
+  }
+
   return (
     <AppContext.Provider value={{
-      factures, setFactures, clients, produits,
+      factures, setFactures, clients, produits, depenses,setDepenses,
       ajouterFacture, ajouterClient, supprimerClient,
-      ajouterProduit, supprimerProduit
+      ajouterProduit, supprimerProduit,
+      ajouterDepense, supprimerDepense
     }}>
       {children}
     </AppContext.Provider>

@@ -8,6 +8,7 @@ import Clients from './pages/Clients'
 import Nouveau from './pages/Nouveau'
 import Catalogue from './pages/Catalogue'
 import Parametres from './pages/Parametres'
+import Depenses from './pages/Depenses'
 import Login from './pages/Login'
 import NavBar from './components/NavBar'
 
@@ -43,6 +44,7 @@ function App() {
             <Route path="/clients" element={<Clients />} />
             <Route path="/nouveau" element={<Nouveau />} />
             <Route path="/catalogue" element={<Catalogue />} />
+            <Route path="/depenses" element={<Depenses />} />
             <Route path="/parametres" element={<Parametres />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
