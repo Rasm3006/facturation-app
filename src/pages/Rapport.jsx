@@ -1,13 +1,12 @@
 import { useApp } from '../AppContext'
+import { generateRapportPDF } from '../utils/generateRapportPDF'
 
 const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 
 export default function Rapport() {
   const { factures, depenses } = useApp()
 
-  const maintenant = new Date()
-  const moisActuel = maintenant.getMonth()
-  const anneeActuelle = maintenant.getFullYear()
+  const anneeActuelle = new Date().getFullYear()
 
   function filtrerParMois(items, mois, annee) {
     return items?.filter(item => {
@@ -31,11 +30,23 @@ export default function Rapport() {
   const depensesTotal = rapports.reduce((sum, r) => sum + r.totalDepenses, 0)
   const beneficeTotal = rapports.reduce((sum, r) => sum + r.benefice, 0)
 
+  const totaux = { ca: caTotal, depenses: depensesTotal, benefice: beneficeTotal }
+
   return (
     <div style={{ background: '#F0F7FF', minHeight: '100vh' }}>
       <div style={{ background: '#1A3C5E', padding: '2rem 1.5rem 1.5rem' }}>
-        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Rapport {anneeActuelle}</h1>
-        <p style={{ color: '#a0bcd8', fontSize: 13, margin: '4px 0 0' }}>Bilan mensuel de votre activité</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Rapport {anneeActuelle}</h1>
+            <p style={{ color: '#a0bcd8', fontSize: 13, margin: '4px 0 0' }}>Bilan mensuel</p>
+          </div>
+          <button
+            onClick={() => generateRapportPDF(rapports, anneeActuelle, totaux)}
+            style={{ background: '#2E6DA4', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+          >
+            📄 PDF
+          </button>
+        </div>
       </div>
 
       <div style={{ padding: '1.5rem' }}>
