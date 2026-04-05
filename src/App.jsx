@@ -12,6 +12,7 @@ import Depenses from './pages/Depenses'
 import Login from './pages/Login'
 import NavBar from './components/NavBar'
 import Rapport from './pages/Rapport'
+import ModifierFacture from './pages/ModifierFacture'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -48,6 +49,7 @@ function App() {
   <Route path="/depenses" element={<Depenses />} />
   <Route path="/parametres" element={<Parametres />} />
   <Route path="/rapport" element={<Rapport />} />
+  <Route path="/modifier/:id" element={<ModifierFacture />} />
   <Route path="*" element={<Navigate to="/" />} />
 </Routes>
         </div>

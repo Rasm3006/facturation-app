@@ -56,7 +56,7 @@ export function generatePDF(facture) {
   doc.setTextColor(26, 60, 94)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text((facture.typeDoc || 'FACTURE').toUpperCase(), 14, 58)
+  doc.text((facture.typedoc || facture.typeDoc || 'FACTURE').toUpperCase(), 14, 58)
 
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
@@ -100,13 +100,23 @@ export function generatePDF(facture) {
 
   let finalY = doc.lastAutoTable.finalY + 8
 
-  doc.setFontSize(10)
-  doc.setTextColor(100, 100, 100)
-  doc.text('Sous-total HT :', 130, finalY)
-  doc.text(formatMontant(facture.sousTotal || facture.total), 196, finalY, { align: 'right' })
-  finalY += 7
+ doc.setFontSize(10)
+doc.setTextColor(100, 100, 100)
+doc.text('Sous-total HT :', 130, finalY)
+doc.text(formatMontant(facture.sousTotal || facture.total), 196, finalY, { align: 'right' })
+finalY += 7
 
-  if (facture.tva) {
+const remise = facture.remise || 0
+const montantRemise = facture.montantRemise || facture.montantremise || 0
+if (remise > 0) {
+  doc.setTextColor(220, 50, 50)
+  doc.text(`Remise (${remise}%) :`, 130, finalY)
+  doc.text(`- ${formatMontant(montantRemise)}`, 196, finalY, { align: 'right' })
+  doc.setTextColor(100, 100, 100)
+  finalY += 7
+}
+
+if (facture.tva) {
     doc.text('TVA (18%) :', 130, finalY)
     doc.text(formatMontant(facture.montantTVA || 0), 196, finalY, { align: 'right' })
     finalY += 7

@@ -48,6 +48,8 @@ export function AppProvider({ children }) {
       conditions: facture.conditions,
       typedoc: facture.typeDoc,
       signature: facture.signature,
+      remise: facture.remise || 0,
+montantremise: facture.montantRemise || 0,
       statut: 'En attente',
       date: new Date().toLocaleDateString()
     }]).select()

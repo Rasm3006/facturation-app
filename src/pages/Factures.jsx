@@ -1,9 +1,11 @@
 import { useApp } from '../AppContext'
 import { generatePDF } from '../utils/generatePDF'
 import { supabase } from '../supabase'
+import { useNavigate } from 'react-router-dom'
 
 export default function Factures() {
   const { factures, setFactures } = useApp()
+  const navigate = useNavigate()
 
   async function changerStatut(id, statut) {
     await supabase.from('factures').update({ statut }).eq('id', id)
@@ -63,23 +65,30 @@ export default function Factures() {
                   ))}
                 </div>
 
-                <div style={{ display: 'flex', gap: 8 }}>
-  <button
-    onClick={() => generatePDF(f)}
-    style={{ flex: 1, background: '#F0F7FF', color: '#2E6DA4', border: '1px solid #4A90D9', borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-  >
-    📄 PDF
-  </button>
-  <button
-    onClick={() => {
-      const message = `Bonjour ${f.client},\n\nVeuillez trouver ci-joint votre ${f.typeDoc || 'facture'} d'un montant de ${f.total?.toLocaleString()} FCFA.\n\nCordialement,\n${JSON.parse(localStorage.getItem('entreprise') || '{}').nom || 'Notre entreprise'}`
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
-    }}
-    style={{ flex: 1, background: '#25D366', color: '#fff', border: 'none', borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-  >
-    📱 WhatsApp
-  </button>
-</div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    onClick={() => navigate(`/modifier/${f.id}`)}
+                    style={{ flex: 1, background: '#F0F7FF', color: '#1A3C5E', border: '1px solid #dce8f5', borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    ✏️ Modifier
+                  </button>
+                  <button
+                    onClick={() => generatePDF(f)}
+                    style={{ flex: 1, background: '#F0F7FF', color: '#2E6DA4', border: '1px solid #4A90D9', borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    📄 PDF
+                  </button>
+                  <button
+                    onClick={() => {
+                      const entreprise = JSON.parse(localStorage.getItem('entreprise') || '{}')
+                      const message = `Bonjour ${f.client},\n\nVeuillez trouver ci-joint votre ${f.typedoc || 'facture'} N° FAC-${f.id?.toString().slice(-4).toUpperCase()} d'un montant de ${f.total?.toLocaleString()} FCFA.\n\n📎 Pour recevoir le document PDF, merci de nous contacter.\n\nCordialement,\n${entreprise.nom || 'Notre entreprise'}\n${entreprise.telephone || ''}`
+                      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+                    }}
+                    style={{ flex: 1, background: '#25D366', color: '#fff', border: 'none', borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    📱 WA
+                  </button>
+                </div>
               </div>
             )
           })}
