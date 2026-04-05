@@ -7,11 +7,10 @@ function formatMontant(n) {
 
 function getNumero(facture) {
   const annee = new Date().getFullYear()
-  const prefix = facture.typeDoc === 'Devis' ? 'DEV' : facture.typeDoc === 'Proforma' ? 'PRO' : 'FAC'
-  const cle = `compteur_${prefix}_${annee}`
-  const compteur = parseInt(localStorage.getItem(cle) || '0') + 1
-  localStorage.setItem(cle, compteur)
-  return `${prefix}-${annee}-${String(compteur).padStart(3, '0')}`
+  const num = Math.floor(Math.random() * 9000 + 1000)
+  const prefix = facture.typedoc === 'Devis' || facture.typeDoc === 'Devis' ? 'DEV' : 
+                 facture.typedoc === 'Proforma' || facture.typeDoc === 'Proforma' ? 'PRO' : 'FAC'
+  return `${prefix}-${annee}-${num}`
 }
 
 export function generatePDF(facture) {
@@ -53,10 +52,11 @@ export function generatePDF(facture) {
   if (entreprise.ifu) doc.text(`IFU : ${entreprise.ifu}`, 130, 24)
   if (entreprise.rccm) doc.text(`RCCM : ${entreprise.rccm}`, 130, 30)
 
+  const typeDocument = facture.typedoc || facture.typeDoc || 'FACTURE'
   doc.setTextColor(26, 60, 94)
   doc.setFontSize(16)
   doc.setFont('helvetica', 'bold')
-  doc.text((facture.typedoc || facture.typeDoc || 'FACTURE').toUpperCase(), 14, 58)
+  doc.text(typeDocument.toUpperCase(), 14, 58)
 
   doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
@@ -81,7 +81,7 @@ export function generatePDF(facture) {
     l.description,
     l.quantite,
     formatMontant(l.prix),
-    formatMontant(l.quantite * l.prix)
+    formatMontant(Number(l.quantite) * Number(l.prix))
   ])
 
   autoTable(doc, {
@@ -100,25 +100,29 @@ export function generatePDF(facture) {
 
   let finalY = doc.lastAutoTable.finalY + 8
 
- doc.setFontSize(10)
-doc.setTextColor(100, 100, 100)
-doc.text('Sous-total HT :', 130, finalY)
-doc.text(formatMontant(facture.sousTotal || facture.total), 196, finalY, { align: 'right' })
-finalY += 7
+  const sousTotal = facture.soustotal || facture.sousTotal || facture.total
+  const remise = facture.remise || 0
+  const montantRemise = facture.montantremise || facture.montantRemise || 0
+  const montantTVA = facture.montanttva || facture.montantTVA || 0
 
-const remise = facture.remise || 0
-const montantRemise = facture.montantRemise || facture.montantremise || 0
-if (remise > 0) {
-  doc.setTextColor(220, 50, 50)
-  doc.text(`Remise (${remise}%) :`, 130, finalY)
-  doc.text(`- ${formatMontant(montantRemise)}`, 196, finalY, { align: 'right' })
+  doc.setFontSize(10)
   doc.setTextColor(100, 100, 100)
+  doc.text('Sous-total HT :', 130, finalY)
+  doc.text(formatMontant(sousTotal), 196, finalY, { align: 'right' })
   finalY += 7
-}
 
-if (facture.tva) {
+  if (remise > 0) {
+    doc.setTextColor(220, 50, 50)
+    doc.text(`Remise (${remise}%) :`, 130, finalY)
+    doc.text(`- ${formatMontant(montantRemise)}`, 196, finalY, { align: 'right' })
+    doc.setTextColor(100, 100, 100)
+    finalY += 7
+  }
+
+  if (facture.tva) {
+    doc.setTextColor(100, 100, 100)
     doc.text('TVA (18%) :', 130, finalY)
-    doc.text(formatMontant(facture.montantTVA || 0), 196, finalY, { align: 'right' })
+    doc.text(formatMontant(montantTVA), 196, finalY, { align: 'right' })
     finalY += 7
   }
 
@@ -132,19 +136,20 @@ if (facture.tva) {
 
   finalY += 24
 
- doc.setDrawColor(26, 60, 94)
-doc.setLineWidth(0.3)
-doc.line(14, finalY, 90, finalY)
-doc.setTextColor(100, 100, 100)
-doc.setFontSize(9)
-doc.setFont('helvetica', 'normal')
-doc.text('Signature & Cachet', 14, finalY + 6)
+  doc.setDrawColor(26, 60, 94)
+  doc.setLineWidth(0.3)
+  doc.line(14, finalY, 90, finalY)
+  doc.setTextColor(100, 100, 100)
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Signature & Cachet', 14, finalY + 6)
 
-if (facture.signature) {
-  try {
-    doc.addImage(facture.signature, 'PNG', 14, finalY - 25, 60, 22)
-  } catch (e) {}
-}
+  if (facture.signature) {
+    try {
+      doc.addImage(facture.signature, 'PNG', 14, finalY - 25, 60, 22)
+    } catch (e) {}
+  }
+
   doc.setTextColor(150, 150, 150)
   doc.setFontSize(8)
   doc.text('Merci pour votre confiance.', 105, 285, { align: 'center' })
@@ -152,5 +157,5 @@ if (facture.signature) {
     doc.text(`${entreprise.nom} — ${entreprise.adresse || ''} — Tél : ${entreprise.telephone || ''}`, 105, 290, { align: 'center' })
   }
 
-  doc.save(`${facture.typeDoc || 'Facture'}-${facture.client}-${facture.date}.pdf`)
+  doc.save(`${typeDocument}-${facture.client}-${facture.date}.pdf`)
 }
