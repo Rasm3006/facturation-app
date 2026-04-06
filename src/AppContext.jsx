@@ -8,13 +8,24 @@ export function AppProvider({ children }) {
   const [clients, setClients] = useState([])
   const [produits, setProduits] = useState([])
   const [depenses, setDepenses] = useState([])
+  const [userId, setUserId] = useState(null)
 
   useEffect(() => {
-    chargerClients()
-    chargerFactures()
-    chargerProduits()
-    chargerDepenses()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUserId(session.user.id)
+      }
+    })
   }, [])
+
+  useEffect(() => {
+    if (userId) {
+      chargerClients()
+      chargerFactures()
+      chargerProduits()
+      chargerDepenses()
+    }
+  }, [userId])
 
   async function chargerClients() {
     const { data } = await supabase.from('clients').select('*').order('created_at', { ascending: false })
@@ -38,6 +49,7 @@ export function AppProvider({ children }) {
 
   async function ajouterFacture(facture) {
     const { data, error } = await supabase.from('factures').insert([{
+      user_id: userId,
       client: facture.client,
       objet: facture.objet,
       total: facture.total,
@@ -49,7 +61,7 @@ export function AppProvider({ children }) {
       typedoc: facture.typeDoc,
       signature: facture.signature,
       remise: facture.remise || 0,
-montantremise: facture.montantRemise || 0,
+      montantremise: facture.montantRemise || 0,
       statut: 'En attente',
       date: new Date().toLocaleDateString()
     }]).select()
@@ -59,6 +71,7 @@ montantremise: facture.montantRemise || 0,
 
   async function ajouterClient(client) {
     const { data, error } = await supabase.from('clients').insert([{
+      user_id: userId,
       nom: client.nom,
       telephone: client.telephone
     }]).select()
@@ -71,16 +84,17 @@ montantremise: facture.montantRemise || 0,
     setClients(clients.filter(c => c.id !== id))
   }
 
- async function ajouterProduit(produit) {
-  const { data, error } = await supabase.from('produits').insert([{
-    nom: produit.nom,
-    prix: produit.prix,
-    prix_achat: produit.prixAchat || 0,
-    unite: produit.unite
-  }]).select()
-  if (error) console.error('Erreur:', error)
-  if (data) setProduits([data[0], ...produits])
-}
+  async function ajouterProduit(produit) {
+    const { data, error } = await supabase.from('produits').insert([{
+      user_id: userId,
+      nom: produit.nom,
+      prix: produit.prix,
+      prix_achat: produit.prixAchat || 0,
+      unite: produit.unite
+    }]).select()
+    if (error) console.error('Erreur:', error)
+    if (data) setProduits([data[0], ...produits])
+  }
 
   async function supprimerProduit(id) {
     await supabase.from('produits').delete().eq('id', id)
@@ -89,6 +103,7 @@ montantremise: facture.montantRemise || 0,
 
   async function ajouterDepense(depense) {
     const { data, error } = await supabase.from('depenses').insert([{
+      user_id: userId,
       libelle: depense.libelle,
       montant: depense.montant,
       categorie: depense.categorie,
@@ -105,7 +120,7 @@ montantremise: facture.montantRemise || 0,
 
   return (
     <AppContext.Provider value={{
-      factures, setFactures, clients, produits, depenses,setDepenses,
+      factures, setFactures, clients, produits, depenses, setDepenses,
       ajouterFacture, ajouterClient, supprimerClient,
       ajouterProduit, supprimerProduit,
       ajouterDepense, supprimerDepense
