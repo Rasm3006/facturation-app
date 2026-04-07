@@ -16,6 +16,7 @@ import ModifierFacture from './pages/ModifierFacture'
 import Boissons from './pages/Boissons'
 import VentesBoissons from './pages/VentesBoissons'
 import TableauBoissons from './pages/TableauBoissons'
+import Serveuses from './pages/Serveuses'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -44,20 +45,21 @@ function App() {
       <BrowserRouter>
         <div style={{ paddingBottom: 64 }}>
           <Routes>
-  <Route path="/" element={<Accueil />} />
-  <Route path="/factures" element={<Factures />} />
-  <Route path="/clients" element={<Clients />} />
-  <Route path="/nouveau" element={<Nouveau />} />
-  <Route path="/catalogue" element={<Catalogue />} />
-  <Route path="/depenses" element={<Depenses />} />
-  <Route path="/parametres" element={<Parametres />} />
-  <Route path="/rapport" element={<Rapport />} />
-  <Route path="/modifier/:id" element={<ModifierFacture />} />
-  <Route path="/boissons" element={<Boissons />} />
-<Route path="/ventes-boissons" element={<VentesBoissons />} />
-<Route path="/tableau-boissons" element={<TableauBoissons />} />
-  <Route path="*" element={<Navigate to="/" />} />
-</Routes>
+            <Route path="/" element={<Accueil />} />
+            <Route path="/factures" element={<Factures />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/nouveau" element={<Nouveau />} />
+            <Route path="/catalogue" element={<Catalogue />} />
+            <Route path="/depenses" element={<Depenses />} />
+            <Route path="/parametres" element={<Parametres />} />
+            <Route path="/rapport" element={<Rapport />} />
+            <Route path="/modifier/:id" element={<ModifierFacture />} />
+            <Route path="/boissons" element={<Boissons />} />
+            <Route path="/ventes-boissons" element={<VentesBoissons />} />
+            <Route path="/tableau-boissons" element={<TableauBoissons />} />
+            <Route path="/serveuses" element={<Serveuses />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
         </div>
         <NavBar />
       </BrowserRouter>

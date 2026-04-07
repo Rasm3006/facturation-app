@@ -29,7 +29,7 @@ export default function Login() {
   return (
     <div style={{ background: '#1A3C5E', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-        <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: '0 0 8px' }}>ProAppli Facture</h1>
+       <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 700, margin: '0 0 8px' }}>ProAppli Commerce</h1>
         <p style={{ color: '#a0bcd8', fontSize: 14, margin: 0 }}>Connectez-vous pour continuer</p>
       </div>
 

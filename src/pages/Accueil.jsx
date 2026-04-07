@@ -33,7 +33,7 @@ export default function Accueil() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#a0bcd8', fontSize: 13, margin: 0 }}>Bienvenue sur</p>
-            <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: '4px 0 0' }}>ProAppli Facture</h1>
+           <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: '4px 0 0' }}>ProAppli Commerce</h1>
           </div>
           <button
             onClick={handleDeconnexion}

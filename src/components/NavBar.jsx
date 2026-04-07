@@ -10,19 +10,20 @@ export default function NavBar() {
     { path: '/', label: 'Accueil', icon: '🏠' },
     { path: '/factures', label: 'Factures', icon: '🧾' },
     { path: '/nouveau', label: 'Nouveau', icon: '➕' },
-    { path: '/clients', label: 'Clients', icon: '👥' },
+    { path: '/ventes-boissons', label: 'Ventes', icon: '🍺' },
   ]
 
-const plusLiens = [
-  { path: '/rapport', label: 'Rapport', icon: '📊' },
-  { path: '/depenses', label: 'Dépenses', icon: '💸' },
-  { path: '/catalogue', label: 'Catalogue', icon: '📦' },
-  { path: '/boissons', label: 'Boissons', icon: '🍺' },
-  { path: '/ventes-boissons', label: 'Ventes', icon: '🛒' },
-  { path: '/tableau-boissons', label: 'Tableau', icon: '📈' },
-  { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
-  { path: '/serveuses', label: 'Serveuses', icon: '👩' },
-]
+  const plusLiens = [
+    { path: '/clients', label: 'Clients', icon: '👥' },
+    { path: '/catalogue', label: 'Catalogue', icon: '📦' },
+    { path: '/depenses', label: 'Dépenses', icon: '💸' },
+    { path: '/rapport', label: 'Rapport', icon: '📊' },
+    { path: '/boissons', label: 'Boissons', icon: '🍺' },
+    { path: '/serveuses', label: 'Serveuses', icon: '👩' },
+    { path: '/tableau-boissons', label: 'Tableau', icon: '📈' },
+    { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
+  ]
+
   return (
     <>
       {showMenu && (
@@ -36,7 +37,7 @@ const plusLiens = [
         <div style={{
           position: 'fixed', bottom: 70, right: 16, background: '#fff',
           borderRadius: 16, padding: '8px', zIndex: 50,
-          border: '0.5px solid #dce8f5', minWidth: 180,
+          border: '0.5px solid #dce8f5', minWidth: 200,
           boxShadow: '0 4px 20px rgba(26,60,94,0.15)'
         }}>
           {plusLiens.map(l => (
@@ -45,7 +46,8 @@ const plusLiens = [
               onClick={() => { navigate(l.path); setShowMenu(false) }}
               style={{
                 display: 'flex', alignItems: 'center', gap: 12,
-                width: '100%', padding: '12px 16px', background: location.pathname === l.path ? '#F0F7FF' : 'none',
+                width: '100%', padding: '12px 16px',
+                background: location.pathname === l.path ? '#F0F7FF' : 'none',
                 border: 'none', borderRadius: 10, cursor: 'pointer',
                 color: location.pathname === l.path ? '#1A3C5E' : '#444',
                 fontWeight: location.pathname === l.path ? 700 : 400,
