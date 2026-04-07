@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabase'
+import { generateTableauPDF } from '../utils/generateTableauPDF'
 
 export default function TableauBoissons() {
   const [boissons, setBoissons] = useState([])
@@ -46,11 +47,23 @@ export default function TableauBoissons() {
 
   const alertes = boissons.filter(b => b.stock_actuel <= b.seuil_alerte)
 
+  const totaux = { totalJour, totalAvoirs, netEncaisser }
+
   return (
     <div style={{ background: '#F0F7FF', minHeight: '100vh' }}>
       <div style={{ background: '#1A3C5E', padding: '2rem 1.5rem 1.5rem' }}>
-        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Tableau de bord</h1>
-        <p style={{ color: '#a0bcd8', fontSize: 13, margin: '4px 0 0' }}>Analyse des ventes boissons</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 700, margin: 0 }}>Tableau buvette</h1>
+            <p style={{ color: '#a0bcd8', fontSize: 13, margin: '4px 0 0' }}>Analyse des ventes</p>
+          </div>
+          <button
+            onClick={() => generateTableauPDF(dateFormatee, parBoisson, parServeuse, totaux, boissons)}
+            style={{ background: '#2E6DA4', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+          >
+            📄 PDF
+          </button>
+        </div>
       </div>
 
       <div style={{ padding: '1.5rem' }}>
