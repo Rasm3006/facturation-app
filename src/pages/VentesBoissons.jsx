@@ -3,6 +3,7 @@ import { supabase } from '../supabase'
 
 export default function VentesBoissons() {
   const [boissons, setBoissons] = useState([])
+  const [serveuses, setServeuses] = useState([])
   const [ventes, setVentes] = useState([])
   const [userId, setUserId] = useState(null)
   const [boissonId, setBoissonId] = useState('')
@@ -19,12 +20,18 @@ export default function VentesBoissons() {
       if (session) setUserId(session.user.id)
     })
     chargerBoissons()
+    chargerServeuses()
     chargerVentes()
   }, [])
 
   async function chargerBoissons() {
     const { data } = await supabase.from('boissons').select('*').order('nom')
     if (data) setBoissons(data)
+  }
+
+  async function chargerServeuses() {
+    const { data } = await supabase.from('serveuses').select('*').order('nom')
+    if (data) setServeuses(data)
   }
 
   async function chargerVentes() {
@@ -159,7 +166,12 @@ export default function VentesBoissons() {
                 <option key={b.id} value={b.id}>{b.nom} — Stock : {b.stock_actuel}</option>
               ))}
             </select>
-            <input style={inputStyle} placeholder="Nom de la serveuse" value={serveuse} onChange={e => setServeuse(e.target.value)} />
+            <select style={{ ...inputStyle, color: serveuse ? '#1A3C5E' : '#a0bcd8' }} value={serveuse} onChange={e => setServeuse(e.target.value)}>
+              <option value="">Sélectionner une serveuse</option>
+              {serveuses.map(s => (
+                <option key={s.id} value={s.nom}>{s.nom}</option>
+              ))}
+            </select>
             <input style={inputStyle} placeholder="Quantité vendue" type="number" inputMode="numeric" value={quantite} onChange={e => setQuantite(e.target.value)} />
             <input style={inputStyle} placeholder="Avoir (manque de monnaie) en FCFA" type="number" inputMode="numeric" value={avoir} onChange={e => setAvoir(e.target.value)} />
             {boissonId && quantite && (

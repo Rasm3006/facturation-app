@@ -21,6 +21,7 @@ const plusLiens = [
   { path: '/ventes-boissons', label: 'Ventes', icon: '🛒' },
   { path: '/tableau-boissons', label: 'Tableau', icon: '📈' },
   { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
+  { path: '/serveuses', label: 'Serveuses', icon: '👩' },
 ]
   return (
     <>
