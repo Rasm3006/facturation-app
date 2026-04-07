@@ -13,6 +13,9 @@ import Login from './pages/Login'
 import NavBar from './components/NavBar'
 import Rapport from './pages/Rapport'
 import ModifierFacture from './pages/ModifierFacture'
+import Boissons from './pages/Boissons'
+import VentesBoissons from './pages/VentesBoissons'
+import TableauBoissons from './pages/TableauBoissons'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -50,6 +53,9 @@ function App() {
   <Route path="/parametres" element={<Parametres />} />
   <Route path="/rapport" element={<Rapport />} />
   <Route path="/modifier/:id" element={<ModifierFacture />} />
+  <Route path="/boissons" element={<Boissons />} />
+<Route path="/ventes-boissons" element={<VentesBoissons />} />
+<Route path="/tableau-boissons" element={<TableauBoissons />} />
   <Route path="*" element={<Navigate to="/" />} />
 </Routes>
         </div>

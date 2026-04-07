@@ -13,13 +13,15 @@ export default function NavBar() {
     { path: '/clients', label: 'Clients', icon: '👥' },
   ]
 
-  const plusLiens = [
-    { path: '/rapport', label: 'Rapport', icon: '📊' },
-    { path: '/depenses', label: 'Dépenses', icon: '💸' },
-    { path: '/catalogue', label: 'Catalogue', icon: '📦' },
-    { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
-  ]
-
+const plusLiens = [
+  { path: '/rapport', label: 'Rapport', icon: '📊' },
+  { path: '/depenses', label: 'Dépenses', icon: '💸' },
+  { path: '/catalogue', label: 'Catalogue', icon: '📦' },
+  { path: '/boissons', label: 'Boissons', icon: '🍺' },
+  { path: '/ventes-boissons', label: 'Ventes', icon: '🛒' },
+  { path: '/tableau-boissons', label: 'Tableau', icon: '📈' },
+  { path: '/parametres', label: 'Paramètres', icon: '⚙️' },
+]
   return (
     <>
       {showMenu && (
